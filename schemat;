@@ -1,0 +1,44 @@
+Czytelnik:
++----------+------------------+------+-----+---------+----------------+
+| Field    | Type             | Null | Key | Default | Extra          |
++----------+------------------+------+-----+---------+----------------+
+| idc      | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| imie     | varchar(30)      | NO   |     | NULL    |                |
+| nazwisko | varchar(50)      | NO   |     | NULL    |                |
+| adres    | varchar(200)     | NO   |     | NULL    |                |
+| telefon  | varchar(20)      | YES  |     | NULL    |                |
+| email    | varchar(30)      | YES  |     | NULL    |                |
++----------+------------------+------+-----+---------+----------------+
+
+Dzielo:
++--------------+------------------+------+-----+---------+----------------+
+| Field        | Type             | Null | Key | Default | Extra          |
++--------------+------------------+------+-----+---------+----------------+
+| idd          | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| tytul        | varchar(100)     | NO   |     | NULL    |                |
+| autor        | varchar(100)     | YES  |     | NULL    |                |
+| kategoria    | varchar(30)      | YES  |     | NULL    |                |
+| rokpowstania | int(4)           | YES  |     | NULL    |                |
++--------------+------------------+------+-----+---------+----------------+
+
+Egzemplarz:
++-------------+------------------+------+-----+---------+----------------+
+| Field       | Type             | Null | Key | Default | Extra          |
++-------------+------------------+------+-----+---------+----------------+
+| ide         | int(10) unsigned | NO   | PRI | NULL    | auto_increment |
+| d_id        | int(10) unsigned | YES  | MUL | NULL    |                |
+| wydawnictwo | varchar(50)      | YES  |     | NULL    |                |
+| rokwydania  | int(4)           | YES  |     | NULL    |                |
++-------------+------------------+------+-----+---------+----------------+
+
+Rezerwacja:
++-----------+------------------+------+-----+-------------------+----------------+
+| Field     | Type             | Null | Key | Default           | Extra          |
++-----------+------------------+------+-----+-------------------+----------------+
+| idr       | int(10) unsigned | NO   | PRI | NULL              | auto_increment |
+| c_id      | int(10) unsigned | YES  | MUL | NULL              |                |
+| e_id      | int(10) unsigned | YES  | MUL | NULL              |                |
+| datazamow | timestamp        | NO   |     | CURRENT_TIMESTAMP |                |
+| datawypoz | timestamp        | YES  |     | NULL              |                |
+| datazwrot | timestamp        | YES  |     | NULL              |                |
++-----------+------------------+------+-----+-------------------+----------------+
