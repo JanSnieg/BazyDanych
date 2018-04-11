@@ -1,0 +1,2 @@
+SET @dateofbirth = '2000-11-11';
+SELECT YEAR(SUBDATE(CURDATE(), INTERVAL @dateofbirth Year));

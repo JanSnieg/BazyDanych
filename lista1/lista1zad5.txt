@@ -1,0 +1,5 @@
+SET @firname = 'Jan';
+SET @lastname = 'Kowalski';
+SELECT CONCAT(IFNULL(LEFT(@firstname, 2) LIKE 'ch' OR 'sz' OR 'rz' OR 'cz'), LEFT(@firstname, 1)), IFNULL(LEFT(@lastname, 2) LIKE 'ch' OR 'sz' OR 'rz' OR 'cz'), LEFT(@lastname, 1));
+
+select concat( if (@first = 'Ch', @first, left(@first,1)) , '.', if (@second = 'Ch', @second, left(@second,1)), '.') as Inicjały;

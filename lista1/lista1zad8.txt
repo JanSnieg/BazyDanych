@@ -1,0 +1,4 @@
+set @spacja = length(@name)-length(replace(@name,' ',''));
+set @firstname = substring_index(@name, ' ', @spacja);
+set @lastname = substring_index(@name, ' ', -1);
+select json_object("firstname", @firstname, "lastname", @lastname) as JSon;

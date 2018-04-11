@@ -1,0 +1,4 @@
+SET @firstname = 'Jan';
+SET @lastname = 'Kowalski';
+SELECT CONCAT_WS(' ', @firstname, @lastname);
+SELECT CONCAT_WS('_', @firstname, @lastname);
