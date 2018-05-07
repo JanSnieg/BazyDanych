@@ -19,7 +19,7 @@ INSERT INTO `WydaloDetal` (`g_id`, `w_id`)
     (2,2),
     (3,3);
 
-INSERT INTO `OcenaWydawnictwa` (`Ocena`, `u_id`, `w_id`)
+INSERT INTO `OcenaWydawnictwa` (`Ocena`, `w_id`, `u_id`)
     VALUES (5.0, 1, 1),
     (2.0, 1, 2),
     (3.5, 1, 3),
@@ -30,7 +30,7 @@ INSERT INTO `OcenaWydawnictwa` (`Ocena`, `u_id`, `w_id`)
     (3.5, 3, 2),
     (1.0, 3, 3);
 
-INSERT INTO `OcenaGry` (`Ocena`, `u_id`, `g_id`)
+INSERT INTO `OcenaGry` (`Ocena`, `g_id`, `u_id`)
     VALUES (5, 1, 1),
     (3, 1, 2),
     (3, 1, 3),
@@ -47,7 +47,7 @@ SELECT * FROM Wydawnictwo;
 SELECT * FROM Gra;
 
 UPDATE OcenaGry
-    SET Ocena = Ocena+1;
+    SET Ocena = Ocena+0.1;
 
 DELETE FROM OcenaGry
     WHERE u_id=1;

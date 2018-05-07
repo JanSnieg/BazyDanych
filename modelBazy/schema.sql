@@ -1,59 +1,68 @@
 /* USUWANIE TABEL JEZELI ISTNIEJA */
-DROP TABLE IF EXISTS `Uzytkownik`;
-DROP TABLE IF EXISTS `Wydawnictwo`;
-DROP TABLE IF EXISTS `Gra`;
-DROP TABLE IF EXISTS `OcenaWydawnictwa`;
-DROP TABLE IF EXISTS `OcenaGry`;
-DROP TABLE IF EXISTS `WydaloDetal`;
+DROP TABLE IF EXISTS `Uzytkownik` CASCADE;
+DROP TABLE IF EXISTS `Wydawnictwo` CASCADE;
+DROP TABLE IF EXISTS `Gra` CASCADE;
+DROP TABLE IF EXISTS `OcenaWydawnictwa` CASCADE;
+DROP TABLE IF EXISTS `OcenaGry` CASCADE;
+DROP TABLE IF EXISTS `WydaloDetal` CASCADE;
 
 
 /* TWORZENIE TABEL */
 CREATE TABLE `Uzytkownik`
 (
-  `idu` INT(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idu` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `Nick` VARCHAR(30) NOT NULL UNIQUE,
   `Haslo` VARCHAR(30) NOT NULL,
   `e-mail` VARCHAR(50) NOT NULL UNIQUE);
 
 CREATE TABLE `Wydawnictwo`
 (
-  `idw` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idw` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `Nazwa` VARCHAR(50) NOT NULL,
   `SredniaOcen` DECIMAL(4,2));
 
 CREATE TABLE `Gra`
 (
-  `idg` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idg` INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `Nazwa` VARCHAR(20) NOT NULL,
   `SredniaOcen` DECIMAL(4,2));
 
 CREATE TABLE `OcenaWydawnictwa`
 (
-  `iduw` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `iduw` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Ocena` DECIMAL(3,1) NOT NULL DEFAULT 0,
   `Data` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `u_id` INT NOT NULL REFERENCES `Uzytkownik` (`idu`)
+  `w_id` INT UNSIGNED NOT NULL,
+  `u_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (iduw),
+  FOREIGN KEY (w_id) REFERENCES Wydawnictwo (idw)
     ON UPDATE CASCADE ON DELETE CASCADE,
-  `w_id` INT NOT NULL REFERENCES `Wydawnictwo` (`idw`)
+  FOREIGN KEY (u_id) REFERENCES Uzytkownik (idu)
     ON UPDATE CASCADE ON DELETE CASCADE);
 
 CREATE TABLE `OcenaGry`
 (
-  `idug` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idug` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Ocena` DECIMAL(3,1) NOT NULL DEFAULT 0,
   `Data` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `g_id` INT NOT NULL REFERENCES `Gra`(`idg`)
+  `g_id` INT UNSIGNED NOT NULL,
+  `u_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (idug),
+  FOREIGN KEY (g_id) REFERENCES Gra (idg)
     ON UPDATE CASCADE ON DELETE CASCADE,
-  `u_id` INT NOT NULL REFERENCES `Uzytkownik`(`idu`)
+  FOREIGN KEY (u_id) REFERENCES Uzytkownik (idu)
     ON UPDATE CASCADE ON DELETE CASCADE);
 
 CREATE TABLE `WydaloDetal`
 (
-  `idd` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `idd` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `Data` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `g_id` INT NOT NULL REFERENCES `Gra` (`idg`)
+  `g_id` INT UNSIGNED NOT NULL,
+  `w_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (idd),
+  FOREIGN KEY (g_id) REFERENCES Gra (idg)
     ON UPDATE CASCADE ON DELETE CASCADE,
-  `w_id` INT NOT NULL REFERENCES `Wydawnictwo` (`idw`)
+  FOREIGN KEY (w_id) REFERENCES Wydawnictwo (idw)
     ON UPDATE CASCADE ON DELETE CASCADE);
 
 /* USUWANIE TRIGGEROW JEZELI ISTNIEJA */
@@ -64,6 +73,7 @@ DROP TRIGGER IF EXISTS `sredniaWydawnictwaDelete`;
 DROP TRIGGER IF EXISTS `sredniaGryInsert`;
 DROP TRIGGER IF EXISTS `sredniaGryUpdate`;
 DROP TRIGGER IF EXISTS `sredniaGryDelete`;
+DROP TRIGGER IF EXISTS `usuwanieUzytkownika`;
 
 
 /* TRIGGERY NA SREDNIA OCENE WYDAWNICTWA*/
@@ -72,7 +82,7 @@ CREATE TRIGGER `sredniaWydawnictwaInsert`
   AFTER INSERT ON `OcenaWydawnictwa`
   FOR EACH ROW
     UPDATE `Wydawnictwo`
-    SET `SredniaOcen` = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
+    SET SredniaOcen = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
       WHERE `idw` = `w_id`)
     WHERE `idw` = NEW.w_id;
 
@@ -81,7 +91,7 @@ CREATE TRIGGER `sredniaWydawnictwaUpdate`
   AFTER UPDATE ON `OcenaWydawnictwa`
   FOR EACH ROW
     UPDATE `Wydawnictwo`
-    SET `SredniaOcen` = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
+    SET SredniaOcen = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
       WHERE `idw` = `w_id`)
     WHERE `idw` = NEW.w_id;
 
@@ -89,7 +99,7 @@ CREATE TRIGGER `sredniaWydawnictwaDelete`
   AFTER DELETE ON `OcenaWydawnictwa`
   FOR EACH ROW
     UPDATE `Wydawnictwo`
-    SET `SredniaOcen` = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
+    SET SredniaOcen = (SELECT AVG(`Ocena`) FROM `OcenaWydawnictwa`
       WHERE `idw` = `w_id`);
 
 /* TRIGGERY NA SREDNIOA OCENE GIER */
@@ -116,3 +126,18 @@ CREATE TRIGGER `sredniaGryDelete`
     UPDATE `Gra`
     SET SredniaOcen = (SELECT AVG(Ocena) FROM OcenaGry
       WHERE `g_id` = `idg`);
+
+delimiter //
+CREATE TRIGGER `usuwanieUzytkownika`
+  AFTER DELETE ON `Uzytkownik`
+  FOR EACH ROW 
+  BEGIN
+    UPDATE `Gra`
+    SET SredniaOcen = (SELECT AVG(Ocena) FROM OcenaGry
+      WHERE `g_id` = `idg`);
+    UPDATE `Wydawnictwo`
+    SET SredniaOcen = (SELECT AVG(Ocena) FROM OcenaWydawnictwa
+      WHERE `idw` = `w_id`);
+  END
+//
+delimiter ;
