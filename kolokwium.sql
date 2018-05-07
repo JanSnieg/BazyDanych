@@ -24,7 +24,7 @@ FROM czytelnik LEFT JOIN rezerwacja ON(c_id=idc)
 WHERE c_id IS NULL;
 
 --Zadanie 6
-SELECT count(ide)
+SELECT COUNT(ide)
 FROM egzemplarz JOIN rezerwacja ON(ide=e_id) LEFT JOIN czytelnik ON(idc=c_id)
 WHERE ((datazwrot IS NULL) AND (adres NOT LIKE "%Wroc%"));
 
@@ -49,3 +49,7 @@ WHERE kategoria LIKE "%fizyka kwantowa%"
 OR kategoria LIKE "%poezja%";
 
 --Zadanie 10
+SELECT idd, COUNT(iloscDni), tytul, autor 
+    FROM (SELECT idd, tytul, autor, (DATEDIFF(datazwrot, datawypoz)) as iloscDni
+    FROM rezerwacja JOIN egzemplarz ON(ide=e_id) JOIN dzielo ON (idd=d_id)
+    GROUP BY idd) as alias1 GROUP BY idd;
