@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <title> PHP</title> <meta charset="utf8">
+    </head>
+
+    <body>
+        <!-- TABLICE, TABELE ITD -->
+        <table></table>
+        <tr>
+            <td></td>
+        </tr>
+        <tr>
+            <th></th>
+        </tr>
+        <table></table>
+        
+        <!-- FORMULARZE -->
+        <form target="adres dokumentu (action.php)" method="POST/GET">
+            <!-- MOZLIWE WYPEŁNIENIE -->
+            <input type="..." name="nazwa zmiennej inputu" value='ustawia napis ("placeholder")'
+            placeholder="lepiej to niz value, dla podpowiedzi">
+            <!-- MOŻLIWE typy:
+                RESET: przycisk, którego działania to przywrócenie do DEFAULT
+                SUBMIT: przycisk do wysyłania formularza, nie do ustawiania zmiennych
+                TEXT: do wpisania tekstu
+                PASSWORD: wpisane rzeczy to ****
+                RADIO: wybieranie z ustalonej listy opcji, najwyrzej 1
+                    <input type:"radio" name="plec" value="kobieta"...>
+                CHECKBOX: mozna wybrać więcej ni jedno, wtedy name="...[]"
+                radio i checkbox moga miec checked
+                HIDDEN-->
+            <textarea name="...">Pole do wpisywania tekstu na wiecej niz 1 linijke</textarea>
+            <select name="...[]" multiple>
+                <option value="" selected>jakistekst</option>
+                <option value="">jakistekst</option>
+                <option value="">jakistekst</option>
+                <!-- menu rozwijane -->
+            </select>
+        </form>
+
+    </body>
+</html>
