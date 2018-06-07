@@ -24,6 +24,7 @@
 <meta charset="utf8">
 
 <head>
+    <link rel="stylesheet" type="text/css" href="style/tables.css">
     <title>Dzięki</title>
 </head>
 

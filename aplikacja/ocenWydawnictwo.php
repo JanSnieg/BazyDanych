@@ -37,10 +37,10 @@
                 if($wszystko_ok)
                 {
                     $ocena = $_POST['Ocena'];
-                    $g_id = $_POST['Nazwa'];
+                    $w_id = $_POST['Nazwa'];
                     $u_id = $_SESSION['idu'];
                     // TODO: DUPLICATE KEY SPRAWDZIC
-                    if($link->query("INSERT INTO OcenaGry VALUES (NULL, '$ocena', NULL, '$g_id', '$u_id', NULL) ON DUPLICATE KEY UPDATE Ocena = '$ocena'"))
+                    if($link->query("INSERT INTO OcenaWydawnictwa VALUES (NULL, '$ocena', NULL, '$w_id', '$u_id', NULL) ON DUPLICATE KEY UPDATE Ocena = '$ocena'"))
                     {
                         $_SESSION['udana_ocena'] = true;
                         header('Location: ocena.php');
@@ -89,11 +89,11 @@
                             throw new Exception(mysqli_connect_errno());
                         else
                         {
-                            if($result = $link->query("SELECT idg, Nazwa FROM Gra ORDER BY Nazwa"))
+                            if($result = $link->query("SELECT idw, Nazwa FROM Wydawnictwo ORDER BY Nazwa"))
                             {
                                 while($row = $result->fetch_assoc())
                                 {
-                                    echo '<option value="'.$row['idg'].'">'.$row['Nazwa'].'</option>';
+                                    echo '<option value="'.$row['idw'].'">'.$row['Nazwa'].'</option>';
                                 }
                             }
                             else

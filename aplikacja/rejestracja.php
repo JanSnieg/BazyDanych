@@ -116,7 +116,7 @@
                 $link->close();
             }
         }
-        catch(Exeption $e)
+        catch(Exception $e)
         {
             echo '<span stype="color:red;"Błąd serwera, przepraszam za niedogodności i proszę o rejestracje w innym czasie!</span>';
             echo '<br />INFORMACJA DEVELOPERSKA: '.$e;

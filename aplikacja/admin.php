@@ -1,11 +1,13 @@
 <?php
     session_start();
-    if(!isset($_POST['nick']) || !isset($_POST['haslo']))
-    {
-        header("Location: index.php");
-        exit();
-    }
-    if($_SESSION['nick'] =! "admin")
+    require_once "connection.php";
+    // TODO: sprawdzić posta, ma byc session
+    // if(!isset($_SESSION['nick']) || !isset($_SESSION['haslo']))
+    // {
+    //     header("Location: index.php");
+    //     exit();
+    // }
+    if(isset($_SESSION['nick']) && ($_SESSION['nick'] != "admin"  ||$_SESSION['email'] != "admin@admin.pl"))
     {
         header("Location: strona_glowna.php");
         exit();
@@ -30,8 +32,7 @@
 
 <body>
     <?php
-        echo "<p>Witaj ".$_SESSION['nick'].'! [ <a href="wyloguj.php">Wyloguj się!</a> ]</p>';
-        require_once "connection.php";
+        echo "<h1>Witaj ".$_SESSION['nick'].'! [ <a href="wyloguj.php">Wyloguj się!</a> ]</h1>';
         mysqli_report(MYSQLI_REPORT_STRICT);
         try
         {
@@ -43,7 +44,8 @@
                 if($result = @$link->query(
                     sprintf("SELECT Gra.Nazwa as 'Gra.Nazwa', CzasTwrania, MinOsob, MaxOsob, Gra.SredniaOcen as 'Gra.SredniaOcen', DataWydania, Wydawnictwo.Nazwa as 'Wydawnictwo.Nazwa', Wydawnictwo.SredniaOcen as 'Wydawnictwo.SredniaOcen' FROM Gra JOIN Wydawnictwo ON(idw=w_id)")))
                     {
-                        echo '<div class="tbl-header">
+                        echo '<h1>Najlepsze Gry</h1>
+                        <div class="tbl-header">
                         <table cellpadding="0" cellspacing="0" border="0">
                           <thead>
                             <tr>
@@ -78,6 +80,40 @@
                     }
                 else
                     throw new Exception($link->error);
+
+                    if($result = $link->query(
+                        sprintf("SELECT DISTINCT
+                        * FROM Wydawnictwo 
+                        ORDER BY SredniaOcen DESC")))
+                        {
+                            echo '<h1>Najlepsze wydawnictwa</h1>
+                            <div class="tbl-header">
+                            <table cellpadding="0" cellspacing="0" border="0">
+                              <thead>
+                                <tr>
+                                  <th>Nazwa Wydawnictwa</th>
+                                  <th>Średnia ocena</th>
+                                </tr>
+                              </thead>
+                            </table>
+                          </div>';
+                          echo '<div class="tbl-content">
+                          <table cellpadding="0" cellspacing="0" border="0">
+                            <tbody>';
+                          while($row = $result->fetch_row())
+                          {
+                            echo '<tr>
+                            <td>'.$row[1].'</td>
+                            <td>'.$row[2].'</td>
+                            </tr>';
+                          }
+                          echo ' </tbody>
+                          </table>
+                        </div>';
+                        }
+                        else
+                            throw new Exception($link->error);
+    
             }
             $link->close();
         }
@@ -97,6 +133,18 @@
     <form action="dodajWydawnictwo.php">
             <div class="row">
                 <input type="submit" name="dodajWydawnictwo" value="Dodaj Wydawnictwo">
+            </div>
+    </form>
+    </form>
+    <form action="usunGre.php">
+            <div class="row">
+                <input type="submit" name="usunGre" value="Usuń Grę">
+            </div>
+    </form>
+    </form>
+    <form action="usunWydawnictwo.php">
+            <div class="row">
+                <input type="submit" name="usunWydawnictwa" value="Usuń Wydawnictwo">
             </div>
     </form>
     </div>

@@ -1,23 +1,24 @@
 <?php
     session_start();
+    require_once "connection.php";
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
-    if(!isset($_SESSION['user']))
+    if(!isset($_SESSION['nick']))
     {
         header("Location: index.php");
         exit();
     }
 
-    if(isset($_SESSION['user']) && ($_SESSION['user'] == "admin" || $_SESSION['email'] == 'admin@admin.pl'))
+    if(isset($_SESSION['nick']) && ($_SESSION['nick'] != "admin" && $_SESSION['email'] != "admin@admin.pl"))
     {
-        header("Location: admin.php");
+        header("Location: strona_glowna.php");
         exit();
     }
-    if(isset($_SESSION['nazwa']))
+    if(isset($_POST['Nazwa']))
     {
         $wszystko_ok = true;
         
-        $nazwa = $_POST['nazwa'];
+        $nazwa = $_POST['Nazwa'];
         if(strlen($nazwa) < 1 || ctype_alnum($nazwa)==false)
         {
             $wszystko_ok = false;
@@ -26,9 +27,7 @@
         //Trzymanie wprowadzonych dancyh
         $_SESSION['fr_nazwa'] = $nazwa;
 
-        require_once "connection.php";
         mysqli_report(MYSQLI_REPORT_STRICT);
-        echo "poczatek try";
         try
         {
             $link = new mysqli($host, $user, $pass, $data_base);
@@ -36,7 +35,6 @@
                 throw new Exception(mysqli_connect_errno());
             else
             {
-                echo "połączone";
                 //sprawdzanie czy nie istnieje juz wydawnictwo o takiej nazwie
                 $result = $link->query("SELECT idw FROM Wydawnictwo WHERE Nazwa='$nazwa'");
                 if(!$result)
@@ -50,7 +48,6 @@
                 {
                     if($link->query("INSERT INTO Wydawnictwo VALUES(NULL, '$nazwa', NULL)"))
                     {
-                        echo "Błąd inserta";
                         $_SESSION['udane_dodanie'] = true;
                         header("Location: dodane.php");
                     }
@@ -61,7 +58,7 @@
                 echo "zamknięte połączenie";
             }
         }
-        catch(Exeption $e)
+        catch(Exception $e)
         {
             echo '<span stype="color:red;"Błąd serwera, przepraszam za niedogodności i proszę spróbować dodać Wydawnictwo w innym czasie!</span>';
             echo '<br />INFORMACJA DEVELOPERSKA: '.$e;
@@ -86,7 +83,7 @@
                     <label for="Nazwa">Nazwa</label>
                 </div>
                 <div class="col-75">
-                    <input type="text" name="nazwa" placeholder="Nazwa" required maxlength="50" value="<?php
+                    <input type="text" name="Nazwa" placeholder="Nazwa" required maxlength="50" value="<?php
                     if(isset($_SESSION['fr_nazwa']))
                     {
                         echo $_SESSION['fr_nazwa'];

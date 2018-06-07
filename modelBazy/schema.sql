@@ -46,6 +46,7 @@ CREATE TABLE `OcenaWydawnictwa`
   PRIMARY KEY (iduw),
   FOREIGN KEY (w_id) REFERENCES Wydawnictwo (idw)
     ON UPDATE CASCADE ON DELETE CASCADE,
+    -- UNIQUE(g_id, u_id), << JEST W BAZIE
   FOREIGN KEY (u_id) REFERENCES Uzytkownik (idu)
     ON UPDATE CASCADE ON DELETE CASCADE);
 
@@ -60,6 +61,7 @@ CREATE TABLE `OcenaGry`
   PRIMARY KEY (idog),
   FOREIGN KEY (g_id) REFERENCES Gra (idg)
     ON UPDATE CASCADE ON DELETE CASCADE,
+  -- UNIQUE(g_id, u_id), << JEST W BAZIE
   FOREIGN KEY (u_id) REFERENCES Uzytkownik (idu)
     ON UPDATE CASCADE ON DELETE CASCADE);
 

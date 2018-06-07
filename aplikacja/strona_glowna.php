@@ -1,5 +1,6 @@
 <?php 
     session_start();
+    require_once "connection.php";
     if(!isset($_SESSION['zalogowany']))
     {
         header("Location: index.php");
@@ -33,9 +34,19 @@
 
     <body>
     <div class="container">
+        <form action="usunKonto.php" method="POST">
+            <div class="row">
+                <input type="submit" name="usunKonto" value="USUŃ KONTO">
+            </div>
+        </form>
         <form action="ocenGre.php" method="POST">
             <div class="row">
                 <input type="submit" name="ocenGre" value="Oceń Grę">
+            </div>
+        </form>
+        <form action="usunOceneGry.php" method="POST">
+            <div class="row">
+                <input type="submit" name="usunOcene" value="Usuń ocenę Gry">
             </div>
         </form>
         <form action="ocenWydawnictwo.php" method="POST">
@@ -43,11 +54,15 @@
                 <input type="submit" name="ocenWydawnictwo" value="Oceń Wydawnictwo">
             </div>
         </form>
+        <form action="usunOceneWydawnictwa.php" method="POST">
+            <div class="row">
+                <input type="submit" name="usunOcene" value="Usuń ocenę Wydawnictwa">
+            </div>
+        </form>
     </div>
     <!-- <h1>Strona główna</h1> -->
     <?php
-        echo "<p>Witaj ".$_SESSION['nick'].'! [ <a href="wyloguj.php">Wyloguj się!</a> ]</p>';
-        require_once "connection.php";
+        echo "<h1>Witaj ".$_SESSION['nick'].'! [ <a href="wyloguj.php">Wyloguj się!</a> ]</h1>';
         mysqli_report(MYSQLI_REPORT_STRICT);
         try
         {

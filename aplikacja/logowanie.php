@@ -6,6 +6,10 @@
         header("Location: index.php");
         exit();
     }
+    if(isset($link))
+    {
+        $link->close();
+    }
 
     require_once "connection.php";
 
@@ -36,7 +40,10 @@
 
                     unset($_SESSION['blad']);
                     $result->close();
-                    header('Location: strona_glowna.php');
+                    if($_SESSION['nick'] == "admin" || $_SESSION['email'] == "admin@admin.pl")
+                        header('Location: admin.php');
+                    else
+                        header('Location: strona_glowna.php');
                 }
                 else
                 {

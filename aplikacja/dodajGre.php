@@ -1,23 +1,26 @@
 <?php
     session_start();
+    require_once "connection.php";
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
-    if(!isset($_SESSION['user']))
+    if(!isset($_SESSION['nick']))
     {
         header("Location: index.php");
         exit();
     }
 
-    else if(isset($_SESSION['user']) && $_SESSION['user'] =! "admin")
+    if(isset($_SESSION['nick']) && ($_SESSION['nick'] != "admin" && $_SESSION['email'] != "admin@admin.pl"))
     {
-        header("Location: wyloguj.php");
+        header("Location: strona_glowna.php");
         exit();
     }
-    else if(isset($_SESSION['Nazwa']))
+    if(isset($_POST['Nazwa']))
     {
         $wszystko_ok = true;
         
         $nazwa = $_POST['Nazwa'];
+        if(isset($_POST['Wydawnictwo']))
+            $idw = $_POST['Wydawnictwo'];
         if(strlen($nazwa) < 1 || ctype_alnum($nazwa)==false)
         {
             $wszystko_ok = false;
@@ -38,11 +41,10 @@
         }
         //Trzymanie wprowadzonych dancyh
         $_SESSION['fr_nazwa'] = $nazwa;
-        $_SESSION['fr_czas'] = $czasTrwania;
+        $_SESSION['fr_czas'] = $czas;
         $_SESSION['fr_od'] = $od;
         $_SESSION['fr_do'] = $do;
-        
-        require_once "connection.php";
+    
         mysqli_report(MYSQLI_REPORT_STRICT);
         try
         {
@@ -52,7 +54,7 @@
             else
             {
                 //sprawdzanie czy nie istnieje juz gra o takiej nazwie
-                $result = $link->query("SELECT idg FROM Gra WHERE idw = '$nazwa'");
+                $result = $link->query("SELECT idg FROM Gra WHERE Nazwa = '$nazwa'");
                 if(!$result)
                     throw new Exception($link->error);
                 if($result->num_rows > 0)
@@ -60,15 +62,13 @@
                     $wszystko_ok = false;
                     $_SESSION['e_nazwa'] = "Istnieje juz Gra o takiej nazwie w bazie danych";
                 }
-                if(!isset($_SESSION['idw']))
-                {
-                    echo "sesja nie działa";
-                }
                 if($wszystko_ok)
                 {
-                    $data = $_POST['data'];
-                    $idw = $_SESSION['idw'];
-                    if($link->query("INSERT INTO Gra VALUES(NULL, '$nazwa, $czas, $od, $do, NULL, $idw, $data)"))
+                    if(isset($_POST['data']) && $_POST['data'] == NULL)
+                        $data = "NULL";
+                    else
+                        $data = "'".(string)$_POST['data']."'";
+                    if($link->query("INSERT INTO Gra VALUES (NULL, '$nazwa', '$czas', '$od', '$do', NULL, '$idw', $data)"))
                     {
                         $_SESSION['udane_dodanie'] = true;
                         header("Location: dodane.php");
@@ -79,7 +79,7 @@
                 $link->close();
             }
         }
-        catch(Exeption $e)
+        catch(Exception $e)
         {
             echo '<span stype="color:red;"Błąd serwera, przepraszam za niedogodności i proszę spróbować dodać grę w innym czasie!</span>';
             echo '<br />INFORMACJA DEVELOPERSKA: '.$e;
@@ -189,16 +189,15 @@
                                     {
                                         while($row = $result->fetch_assoc())
                                         {
-                                            $_SESSION['idw'] = $row['idw'];
                                             echo '<option value="'.$row['idw'].'">'.$row['Nazwa'].'</option>';
                                         }
                                     }
                                     else
-                                        throw new Exeption($link->error);
+                                        throw new Exception($link->error);
                                 }
                                 $link->close();
                             }
-                            catch(Exeption $e)
+                            catch(Exception $e)
                             {
                                 echo '<span stype="color:red;"Błąd serwera, przepraszam za niedogodności.</span>';
                                 echo '<br />INFORMACJA DEVELOPERSKA: '.$e;
